@@ -74,7 +74,7 @@ var $appendSelect = {
         }
         boxHTML = "<div class='append-select-container'><select style='width: auto; display: inline;' id='append-select-" + this.data.name + "-box' class='append-select-box form-control' " + ((readOnly) ? 'disabled="disabled"' : '') + ">";
         var options = this.data.options;
-        for (var key2=0; key2 < options.length; key2++) {
+        for (var key2 = 0; key2 < options.length; key2++) {
             boxHTML += "<option class='append-select-option' value='" + options[key2].value + "'>" + options[key2].text + "</option>";
         }
         boxHTML += "</select><button style='width: auto; display: inline;' id='append-select-" + this.data.name + "-add-button' class='append-select-button form-control'>" + this.addButtonText + "</button></div>";
@@ -109,7 +109,7 @@ var $appendSelect = {
         var removeButtons = document.getElementsByClassName("append-select-" + this.data.name + "-remove-button");
 
         var _self = this;
-        if(addButton !== null){
+        if (addButton !== null) {
             addButton.addEventListener('click', addEventHandler = function () {
                 _self.addElementClick();
             });
@@ -124,7 +124,7 @@ var $appendSelect = {
     removeEventsListeners: function () {
         var addButton = document.getElementById(this.box.elementsIDs.addButton);
         var removeButtons = document.getElementsByClassName("append-select-" + this.data.name + "-remove-button");
-        if(addButton !== null){
+        if (addButton !== null) {
             addButton.removeEventListener('click', addEventHandler);
         }
 
@@ -138,16 +138,23 @@ var $appendSelect = {
         var box = document.getElementById(this.box.elementsIDs.box);
         if (!('remove' in Element.prototype) && button !== null) {
             button.parentNode.parentNode.removeChild(button.parentNode);
-        }
-        else if (button !== null) {
+        } else if (button !== null) {
             button.parentNode.remove();
         }
-        if(box === null){
+        if (box === null) {
             var emptyOptions = document.getElementById(this.box.elementsIDs.emptyOptions);
-            emptyOptions.remove();
-        }
-        else {
-            box.parentNode.remove();
+            if (!('remove' in Element.prototype)){
+                emptyOptions.parentNode.removeChild(emptyOptions);
+            }
+            else {
+                emptyOptions.remove();
+            }
+        } else {
+            if (!('remove' in Element.prototype)) {
+                box.parentNode.parentNode.removeChild(box.parentNode);
+            } else {
+                box.parentNode.remove();
+            }
         }
         this.container.innerHTML += this.box.defaultHtml;
         this.filterOptions();
@@ -168,7 +175,11 @@ var $appendSelect = {
 
         for (var key = options.length - 1; key >= 0; key--) {
             if (!options[key].selected) {
-                box.remove(key);
+                if (!('remove' in Element.prototype)) {
+                    options[key].parentNode.removeChild(options[key]);
+                } else {
+                    box.remove(key);
+                }
             }
         }
         box.setAttribute('disabled', 'disabled');
@@ -190,23 +201,25 @@ var $appendSelect = {
         this.filterOptions();
         this.createEventsListeners();
     },
-    filterOptions: function(){
-        var selectedOptions = document.getElementsByName(this.data.name+"[]");
+    filterOptions: function () {
+        var selectedOptions = document.getElementsByName(this.data.name + "[]");
         var box = document.getElementById(this.box.elementsIDs.box);
         var options = box.getElementsByTagName('option');
-        for(var key = 0; key < selectedOptions.length; key++){
-            for(var key2 = options.length - 1; key2 >= 0 ; key2--){
-                if(options[key2].value === selectedOptions[key].value){
-                    options[key2].remove();
+        for (var key = 0; key < selectedOptions.length; key++) {
+            for (var key2 = options.length - 1; key2 >= 0; key2--) {
+                if (options[key2].value === selectedOptions[key].value) {
+                    if (!('remove' in Element.prototype)) {
+                        options[key2].parentNode.removeChild(options[key2]);
+                    } else {
+                        options[key2].remove();
+                    }
                 }
             }
         }
         options = box.getElementsByTagName('option');
-        if(!options.length){
+        if (!options.length) {
             this.box.elementsIDs.emptyOptions = "append-select-'+this.box.name+'-empty-options";
-            box.parentNode.innerHTML = '<p id="'+this.box.elementsIDs.emptyOptions+'">'+this.pickedAllOptionsText+'</p>';
-            box.remove();
+            box.parentNode.innerHTML = '<select style="width: auto; display: inline;" class="form-control" id="' + this.box.elementsIDs.emptyOptions + '" disabled="disabled"><option>' + this.pickedAllOptionsText + '</option></select>';
         }
     }
-
 };
