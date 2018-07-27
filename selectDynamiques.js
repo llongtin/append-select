@@ -111,13 +111,13 @@ var $appendSelect = {
         var _self = this;
         if(addButton !== null){
             addButton.addEventListener('click', addEventHandler = function () {
-                _self.addElementClick(_self);
+                _self.addElementClick();
             });
         }
 
         for (var i = 0; i < removeButtons.length; i++) {
             removeButtons[i].addEventListener('click', removeEventHandler = function (e) {
-                _self.removeElementClick(e, _self);
+                _self.removeElementClick(e);
             });
         }
     },
@@ -132,10 +132,10 @@ var $appendSelect = {
             removeButtons[i].removeEventListener('click', removeEventHandler);
         }
     },
-    removeElementClick: function (e, _self) {
-        _self.removeEventsListeners();
+    removeElementClick: function (e) {
+        this.removeEventsListeners();
         var button = document.getElementById(e.srcElement.id);
-        var box = document.getElementById(_self.box.elementsIDs.box);
+        var box = document.getElementById(this.box.elementsIDs.box);
         if (!('remove' in Element.prototype) && button !== null) {
             button.parentNode.parentNode.removeChild(button.parentNode);
         }
@@ -143,27 +143,27 @@ var $appendSelect = {
             button.parentNode.remove();
         }
         if(box === null){
-            var emptyOptions = document.getElementById(_self.box.elementsIDs.emptyOptions);
+            var emptyOptions = document.getElementById(this.box.elementsIDs.emptyOptions);
             emptyOptions.remove();
         }
         else {
             box.parentNode.remove();
         }
-        _self.container.innerHTML += _self.box.defaultHtml;
-        _self.filterOptions();
-        _self.createEventsListeners();
+        this.container.innerHTML += this.box.defaultHtml;
+        this.filterOptions();
+        this.createEventsListeners();
     },
-    addElementClick: function (_self) {
-        var box = document.getElementById(_self.box.elementsIDs.box);
+    addElementClick: function () {
+        var box = document.getElementById(this.box.elementsIDs.box);
         var options = box.getElementsByTagName('option');
-        var button = document.getElementById(_self.box.elementsIDs.addButton);
-        var boxClass = " append-select-" + _self.data.name + "-selected";
-        var buttonClass = " append-select-" + _self.data.name + "-remove-button";
-        var hiddenElement = "<input type='hidden' name='" + _self.data.name + "[]' value='" + box.value + "'>";
-        _self.removeEventsListeners();
+        var button = document.getElementById(this.box.elementsIDs.addButton);
+        var boxClass = " append-select-" + this.data.name + "-selected";
+        var buttonClass = " append-select-" + this.data.name + "-remove-button";
+        var hiddenElement = "<input type='hidden' name='" + this.data.name + "[]' value='" + box.value + "'>";
+        this.removeEventsListeners();
 
-        if (_self.select2) {
-            _self.destroySelect2();
+        if (this.select2) {
+            this.destroySelect2();
         }
 
         for (var key = options.length - 1; key >= 0; key--) {
@@ -172,23 +172,23 @@ var $appendSelect = {
             }
         }
         box.setAttribute('disabled', 'disabled');
-        var newID = "append-select-" + _self.data.name + "-selected-" + _self.selectedAI;
+        var newID = "append-select-" + this.data.name + "-selected-" + this.selectedAI;
 
         box.className += boxClass;
         box.id = newID + "-box";
         button.id = newID + "-remove-button";
         button.className += buttonClass;
 
-        button.innerHTML = _self.removeButtonText;
+        button.innerHTML = this.removeButtonText;
 
         box.parentNode.innerHTML += hiddenElement;
-        _self.container.innerHTML += _self.box.defaultHtml;
-        if (_self.select2) {
-            _self.launchSelect2();
+        this.container.innerHTML += this.box.defaultHtml;
+        if (this.select2) {
+            this.launchSelect2();
         }
-        _self.selectedAI++;
-        _self.filterOptions();
-        _self.createEventsListeners();
+        this.selectedAI++;
+        this.filterOptions();
+        this.createEventsListeners();
     },
     filterOptions: function(){
         var selectedOptions = document.getElementsByName(this.data.name+"[]");
